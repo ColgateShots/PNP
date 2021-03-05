@@ -27,15 +27,20 @@ Line(5) = {2, 7};
 //+
 Spline(6) = {7, 5, 6};
 //+
-Physical Curve(11) = {6};
-//+
-Physical Curve(12) = {3};
-//+
 Curve Loop(1) = {1, 2, 3, 4, 5, 6};
 //+
 Plane Surface(1) = {1};
 //+
-Physical Curve(1) = {1, 2, 3, 4, 5, 6};
+Physical Curve(1) = {6};
 //+
-Physical Surface(2) = {1};
-
+Physical Curve(2) = {1};
+//+
+Physical Curve(3) = {2};
+//+
+Physical Curve(4) = {3};
+//+
+Physical Curve(5) = {4};
+//+
+Physical Curve(6) = {5};
+//+
+Physical Surface(7) = {1};
