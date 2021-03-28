@@ -1,12 +1,12 @@
 # PNP
 folder meshing:
-  physical.xdmf: should represent shape of BC of regular solver
+  should represent shape of BC of regular solver
 
-Cylindrical solver:
-  simplitic solver to implement Cylindrical coordinates
+FENICS_SOLVER_MESHED-ROT:
+  solver to implement Cylindrical coordinates
  
-Solver meshed:
-  can import xdmf, no plotting yet (reshaping issue)
+FENICS_SOLVER_MESHED:
+  solver that solves with kartesian coordinates
   
-Solver:
-  will be updated with xdmf and cylindrical coordinates
+FENICS_SOLVER_MESHED-1D:
+  solves along a 1D axis parallel zu z-axis
