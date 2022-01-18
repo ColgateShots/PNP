@@ -1,11 +1,11 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.5'
+#       format_name: percent
+#       format_version: '1.3'
 #       jupytext_version: 1.9.1
 #   kernelspec:
 #     display_name: Python 3
@@ -13,10 +13,13 @@
 #     name: python3
 # ---
 
+# %% [markdown]
 # # FENICS SOLVER
 
+# %% [markdown]
 # ### Import needed packages 
 
+# %%
 # Get the libraries
 import fenics as fn
 import numpy as np
@@ -30,8 +33,9 @@ import meshio as mio
 #import mshr as msr
 
 
+# %%
 
-
+# %%
 mesh = fn.Mesh()
 with fn.XDMFFile("meshing/Dmesh.xdmf") as infile:
     infile.read(mesh)
@@ -41,7 +45,7 @@ with fn.XDMFFile("meshing/Dmf.xdmf") as infile:
 mf = fn.cpp.mesh.MeshFunctionSizet(mesh, mvc)
 
 
-# +
+# %%
 M    = 2   #species
 
 Poly    = fn.FiniteElement('Lagrange', mesh.ufl_cell(),2)
@@ -52,7 +56,7 @@ Elem    = [ElemP + ElemR][0]
 Mixed   = fn.MixedElement(Elem)
 V       = fn.FunctionSpace(mesh, Mixed)
 
-# +
+# %%
 # define potentials and concentrations
 u_GND  = fn.Expression('0', degree=2)          #Ground
 u_DD   = fn.Expression('0.5', degree=2)          #pontential
@@ -99,15 +103,16 @@ for i in range(M):
         
 PNP_xy     = PoissonLeft + PoissonRight + NernstPlanck + constraint        # PNP system
  
-# -
 
+# %%
 # Compute solution
 fn.solve(PNP_xy == 0, UC, bcs) # solve function
 
 
+# %%
 S1, S2, S3, S4, S5 = UC.split()
 
-# +
+# %%
 fig = plt.figure()
 ax = fig.add_subplot()
 
@@ -118,12 +123,13 @@ ax.set_xlabel("$ z_{dl}\;[{\lambda_D}]$")
 fig.tight_layout()
 plt.savefig("1DPOT.png")
 
-# -
 
+# %%
 x = 0.0327683*np.linspace(0,500)
 y = [S1(0,x,0) for x in np.linspace(0,500)]
 z = [S2(0,x,0) for x in np.linspace(0,500)]
 
+# %%
 np.savez("d.npz", x, y, z)
 
-
+# %%

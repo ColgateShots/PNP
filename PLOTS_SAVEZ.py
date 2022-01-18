@@ -1,11 +1,11 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.5'
+#       format_name: percent
+#       format_version: '1.3'
 #       jupytext_version: 1.9.1
 #   kernelspec:
 #     display_name: Python 3
@@ -13,17 +13,20 @@
 #     name: python3
 # ---
 
+# %%
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
+# %%
 cartesian_plot = np.load("cart.npz")
 rotational_plot = np.load("rot.npz")
 onedimensional_plot = np.load("d.npz")
 
+# %%
 cartesian_plot["arr_1"]
 
-# +
+# %%
 # %matplotlib notebook
 fig, host = plt.subplots()
 fig.subplots_adjust(right=1.1)
@@ -42,7 +45,7 @@ fig.tight_layout()
 plt.savefig("ALL_POT.png", dpi=1200)
 
 
-# +
+# %%
 # %matplotlib notebook
 fig, host = plt.subplots()
 fig.subplots_adjust(right=1.1)
@@ -61,6 +64,5 @@ fig.tight_layout()
 plt.savefig("ALL_CON.png", dpi=1200)
 
 
-# -
 
-
+# %%

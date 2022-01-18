@@ -1,11 +1,11 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.5'
+#       format_name: percent
+#       format_version: '1.3'
 #       jupytext_version: 1.9.1
 #   kernelspec:
 #     display_name: Python 3
@@ -13,10 +13,13 @@
 #     name: python3
 # ---
 
+# %% [markdown]
 # # FENICS SOLVER
 
+# %% [markdown]
 # ### Import needed packages 
 
+# %%
 # Get the libraries
 import fenics as fn
 import numpy as np
@@ -29,6 +32,7 @@ from matplotlib import cm #Colormap
 import meshio as mio
 import mshr
 
+# %%
 mesh = fn.Mesh()
 with fn.XDMFFile("meshing/mesh.xdmf") as infile:
     infile.read(mesh)
@@ -37,7 +41,7 @@ with fn.XDMFFile("meshing/mf.xdmf") as infile:
     infile.read(mvc, "name_to_read")
 mf = fn.cpp.mesh.MeshFunctionSizet(mesh, mvc)
 
-# +
+# %%
 M    = 2   #species
 
 Poly    = fn.FiniteElement('Lagrange', mesh.ufl_cell(),2)
@@ -47,11 +51,10 @@ ElemR   = [Multi] * (M)
 Elem    = [ElemP + ElemR][0]
 Mixed   = fn.MixedElement(Elem)
 V       = fn.FunctionSpace(mesh, Mixed)
-# -
 
+# %%
 
-
-# +
+# %%
 # define potentials and concentrations
 u_GND  = fn.Expression('0', degree=2)          #Ground
 u_DD   = fn.Expression('0.5', degree=2)          #pontential
@@ -98,15 +101,15 @@ for i in range(M):
     
 PNP_xy     = PoissonLeft + PoissonRight + NernstPlanck + constraint        # PNP system
 
-# -
 
+# %%
 # Compute solution
 fn.solve(PNP_xy == 0, UC, bcs) # solve function
 S1, S2, S3, S4, S5 = UC.split()
 
+# %%
 
-
-# +
+# %%
 fig = plt.figure()
 ax = fig.add_subplot()
 
@@ -119,15 +122,15 @@ ax.set_ylabel("$ \Phi\;[{U_T}]$")
 ax.set_xlabel("$ y_{dl}\;[{\lambda_D}]$")
 fig.tight_layout()
 plt.savefig("POT_ROT.png")
-# -
 
+# %%
 #plt.plot(np.linspace(0,500),[S2(0,x,0) for x in np.linspace(0,500)])
 #plt.plot(np.linspace(0,600),[S2(100,x,0) for x in np.linspace(0,600)])
 #plt.plot(np.linspace(0,900),[S2(200,x,0) for x in np.linspace(0,900)])
 #plt.plot(np.linspace(0,1000),[S2(500,x,0) for x in np.linspace(0,1000)])
 S2(500,1000,0)
 
-# +
+# %%
 import matplotlib.tri as tri
 
 def mesh2triang(mesh):
@@ -142,11 +145,12 @@ def plot(obj):
     plt.colorbar()
 
 plot(S1)
-# -
 
+# %%
 plot(S2)
 
 
+# %%
 def plot_tri(obj):
     plt.gca().set_aspect('equal')
     C = obj.compute_vertex_values(mesh)
@@ -155,9 +159,10 @@ def plot_tri(obj):
     plt.colorbar()
 
 
+# %%
 plot_tri(S1)
 
-# +
+# %%
 fig = plt.figure()
 ax = fig.add_subplot()
 
@@ -169,11 +174,10 @@ ax.set_ylabel("$ \Phi\;[{U_T}]$")
 ax.set_xlabel("$ x\;[{\lambda_D}]$")
 fig.tight_layout()
 plt.savefig("POTslahes_rot.png")
-# -
 
+# %%
 
-
-# +
+# %%
 # %matplotlib notebook
 fig, host = plt.subplots()
 fig.subplots_adjust(right=1.1)
@@ -217,10 +221,11 @@ lines = [p10,p11,p12,p13,p20,p21,p22,p23]
 host.legend(lines, [l.get_label() for l in lines], loc="upper left", fontsize="x-small", bbox_to_anchor=(0.08, 1))
 plt.savefig("ROT_PLOT.png", bbox_inches = 'tight', dpi=1200)
 plt.show()
-# -
 
+# %%
 x = 0.0327683*np.linspace(0,500)
 y = [S1(0,x,0) for x in np.linspace(0,500)]
 z = [S2(0,x,0) for x in np.linspace(0,500)]
 
+# %%
 np.savez("rot.npz", x, y, z)

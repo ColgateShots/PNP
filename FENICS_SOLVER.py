@@ -1,11 +1,11 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
-#       format_name: light
-#       format_version: '1.5'
+#       format_name: percent
+#       format_version: '1.3'
 #       jupytext_version: 1.9.1
 #   kernelspec:
 #     display_name: Python 3
@@ -13,10 +13,13 @@
 #     name: python3
 # ---
 
+# %% [markdown]
 # # FENICS SOLVER
 
+# %% [markdown]
 # ### Import needed packages 
 
+# %%
 # Get the libraries
 import fenics as fn
 import numpy as np
@@ -29,12 +32,13 @@ from matplotlib import cm #Colormap
 import meshio as mio
 import mshr as msr
 
+# %% [markdown]
 # #### Recangle mesh representing cell
 # #### Finite Elements for electrical potential and ion concentration
 # #### Simulation domain
 #
 
-# +
+# %%
 #set parameters
 q  = constants.value('elementary charge')           #C
 T  = 273      #K
@@ -49,7 +53,7 @@ beta  = z
 gamma = D
 delta = 1#(D * q * z)/(k * T)
 
-# +
+# %%
 # define mesh and define function space
 X    = 500  #x-limit
 Y    = 500  #y-limit
@@ -67,8 +71,8 @@ Elem    = [ElemP + ElemR][0]
 Mixed   = fn.MixedElement(Elem)
 V       = fn.FunctionSpace(mesh, Mixed)
 
-# -
 
+# %% [markdown]
 # Poisson equation PE:
 #     $$ \nabla ( \epsilon_0 \epsilon_r \nabla \Phi) = \rho = zFc $$
 # Nernst-Planck equation NPE:
@@ -82,7 +86,7 @@ V       = fn.FunctionSpace(mesh, Mixed)
 # Establish generalized PNP system:
 #     $$ \int \alpha \nabla \Phi * v * dx - \int \beta c * v *dx - \int(\gamma \nabla c - \delta c \nabla \Phi ) * w *dx $$
 
-# +
+# %%
 # define potentials and concentrations
 u_GND  = fn.Expression('0', degree=2)          #Ground
 u_DD   = fn.Expression('0.5', degree=2)          #pontential
@@ -141,17 +145,18 @@ for i in range(M):
         
 PNP_xy     = PoissonLeft + PoissonRight + NernstPlanck + constraint        # PNP system
  
-# -
 
+# %%
 # Compute solution
 fn.solve(PNP_xy == 0, UC, bcs) # solve function
 
+# %%
 # %matplotlib notebook
 x,y=mesh.coordinates().T
 X=x.reshape(NX+1,NY+1)
 Y=y.reshape(NX+1,NY+1)
 
-# +
+# %%
 w_xy = np.array([UC(xy) for xy in mesh.coordinates()])
 W_xy = w_xy.reshape((NX+1),(NY+1),M+1+M)
 U_xy = W_xy[:,:,0]
@@ -172,8 +177,8 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(X,Y,C_xys[:,:,1])
 
-# -
 
+# %%
 def colormap(array):
     fig = plt.figure()
     ax = fig.add_subplot()
@@ -181,20 +186,24 @@ def colormap(array):
     ax.imshow(array, cmap="viridis")
 
 
+# %%
 def contour(array):
     fig = plt.figure()
     ax = fig.add_subplot()
     ax.contour(array)
 
 
+# %%
 contour(U_xy)
 
+# %%
 fig = plt.figure()
 ax = fig.add_subplot()
 ax.plot(Y,U_xy[::,10])
 ax.plot(Y,U_xy[::,20])
 ax.plot(Y,U_xy[::,25])
 
+# %%
 fig = plt.figure()
 ax = fig.add_subplot()
 ax.plot(Y,U_xy[50])
