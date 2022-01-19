@@ -1,5 +1,5 @@
 #
-# Copyright 2021 Johannes Laurin Hoermann
+# Copyright 2021-2022 Johannes Laurin Hoermann
 #
 # ### MIT license
 #
