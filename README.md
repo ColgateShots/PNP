@@ -1,4 +1,11 @@
 # PNP
+
+## Versioning
+
+Use `jupytext` (https://jupytext.readthedocs.io/en/latest/index.html)
+for versioning jupyter notebooks.
+
+## Content
 folder meshing:
   should represent shape of BC of regular solver
 

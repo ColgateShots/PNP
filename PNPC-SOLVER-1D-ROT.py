@@ -69,15 +69,15 @@ Elem
 
 # %%
 # define potentials and concentrations
-u_GND  = fn.Expression('0.5', degree=0)
-u_DD   = fn.Expression('0.025', degree=0)
-c_INIT = fn.Expression('0.00001', degree=0)
-c_AVG  = fn.Expression('0.0001', degree=0)
+u_GND  = fn.Expression('0', degree=2)
+u_DD   = fn.Expression('0.025', degree=2)
+c_INIT = fn.Expression('0.00001', degree=2)
+c_AVG  = fn.Expression('0.00001', degree=2)
 
 # define boundaries
 def boundaryGND(x, on_boundary):
     tol=1e-12
-    return ((x[1] < -500 + tol) and on_boundary)  
+    return ((x[1] < -500 + tol) and on_boundary) 
 def boundaryHigh(x, on_boundary):
     tol=1e-12
     return (x[1] > 500  - tol) and on_boundary
@@ -85,10 +85,10 @@ def boundaryHigh(x, on_boundary):
 # set boundary conditions
 GammaGND  = fn.DirichletBC(V.sub(0), u_GND, boundaryGND)  # ground potential at straight electrode
 GammaHigh = fn.DirichletBC(V.sub(0), u_DD, boundaryHigh)  # high potential at shaped electrode
-#GammaC_GND0 = fn.DirichletBC(V.sub(0) , c_INIT, boundaryGND)
-#GammaC_GND1 = fn.DirichletBC(V.sub(1) , c_INIT, boundaryGND) 
-#GammaC_GND2 = fn.DirichletBC(V.sub(2) , c_INIT, boundaryGND)
-bcs=[GammaGND,GammaHigh]#,GammaC_GND0,GammaC_GND1,GammaC_GND2]
+GammaC_GND0 = fn.DirichletBC(V.sub(0) , c_INIT, boundaryGND)
+GammaC_GND1 = fn.DirichletBC(V.sub(1) , c_INIT, boundaryGND) 
+GammaC_GND2 = fn.DirichletBC(V.sub(2) , c_INIT, boundaryGND)
+bcs=[GammaGND,GammaHigh,GammaC_GND0,GammaC_GND1,GammaC_GND2]
 
 
 # define problem
@@ -103,13 +103,15 @@ v, w1, w2, mu1, mu2  = VW[0], VW[1], VW[2], VW[3], VW[4]
 r = fn.Expression('x[0]', degree=1)
 
 # changing concentrations charges
-PoissonLeft     = (fn.dot(fn.grad(u), fn.grad(v)))*fn.dx
-PoissonRight    = (-c1+c2)*v*fn.dx
-NernstPlanck1   = fn.dot((-fn.grad(c1) - (c1)*fn.grad(u)),fn.grad(w1))*fn.dx
-NernstPlanck2   = fn.dot((-fn.grad(c2) + (c2)*fn.grad(u)),fn.grad(w2))*fn.dx
-Constraint1     = lam1 * w1 * fn.dx + ((c1) - c_AVG) * mu1 * fn.dx
-Constraint2     = lam2 * w2 * fn.dx + ((c2) - c_AVG) * mu2 * fn.dx
-PNP_xy          = PoissonLeft + PoissonRight + NernstPlanck1 + NernstPlanck2 + Constraint1 + Constraint2
+PoissonLeft     = (fn.dot(r*fn.grad(u), fn.grad(v)))*fn.dx
+PoissonRight    = r*c1*v*fn.dx - r*c2*v*fn.dx
+
+NernstPlanck1   = (fn.dot(r*(-fn.grad(c1) - (c1)*fn.grad(u)),fn.grad(w1))*fn.dx)
+NernstPlanck2   = (fn.dot(r*(-fn.grad(c2) + (c2)*fn.grad(u)),fn.grad(w2))*fn.dx)
+
+Constraint1     = r*lam1 * w1 * fn.dx + r*((c1) - c_AVG) * mu1 * fn.dx
+Constraint2     = r*lam2 * w2 * fn.dx + r*((c2) - c_AVG) * mu2 * fn.dx
+PNP_xy          = PoissonLeft - PoissonRight + NernstPlanck1 + NernstPlanck2 + Constraint1 + Constraint2
  
 
 # %%
@@ -131,22 +133,22 @@ C_xys = W_xy[:,:,1:]
 # %%
 fig = plt.figure()
 ax = fig.add_subplot()
-ax.plot(Y,U_xy[::,10])
-ax.plot(Y,U_xy[::,20])
+#ax.plot(Y,U_xy[::,10])
+#ax.plot(Y,U_xy[::,20])
 ax.plot(Y,U_xy[::,25])
 
 # %%
 fig = plt.figure()
 ax = fig.add_subplot()
-ax.plot(Y,C_xys[:,:,0][::,10])
-ax.plot(Y,C_xys[:,:,0][::,20])
+#ax.plot(Y,C_xys[:,:,0][::,10])
+#ax.plot(Y,C_xys[:,:,0][::,20])
 ax.plot(Y,C_xys[:,:,0][::,25])
 
 # %%
 fig = plt.figure()
 ax = fig.add_subplot()
-ax.plot(Y,C_xys[:,:,1][::,10])
-ax.plot(Y,C_xys[:,:,1][::,20])
+#ax.plot(Y,C_xys[:,:,1][::,10])
+#ax.plot(Y,C_xys[:,:,1][::,20])
 ax.plot(Y,C_xys[:,:,1][::,25])
 
 # %%
